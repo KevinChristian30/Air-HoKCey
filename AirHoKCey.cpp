@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <conio.h>
 #include <windows.h>
+#include <time.h>
 
 #define BUFFERSIZE 1000
 
@@ -102,6 +104,7 @@ namespace game{
 			
 			void moveUp(){
 				
+        if (this->posY - 1 <= 0) return;
 				this->clear();
 				this->posY--;
 				this->render();
@@ -110,6 +113,7 @@ namespace game{
 			
 			void moveDown(){
 				
+        if (this->posY + this->height + 1 >= H) return;
 				this->clear();
 				this->posY++;
 				this->render();
@@ -119,35 +123,62 @@ namespace game{
 	};
 	
 	Puck left = Puck(4, 8);
+  Puck right = Puck(W - 5, 8);
 	
 	void render(){
 		
 		left.render();	
+    right.render();
 		
 	}
 	
-	void update(){
+	void updatePlayerPosition(){
 			
+    fflush(stdin);
 		char input = getch();
 		if (input == 'w' || input == 'W') left.moveUp();
 		else if (input == 's' || input == 'S') left.moveDown();
 		
 	}
+
+  void updateEnemyPosition(){
+
+    srand(time(NULL));
+    bool moveUp = rand() % 2 == 0;
+    if (moveUp) right.moveUp();
+    else right.moveDown(); 
+
+  }
 	
 	void loop(){
 		
 		utility::clear();
 		displayMap();
-		
 		render();
+
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    unsigned long long int rightThen = ts.tv_nsec / 1000000;
+    unsigned long long int rightNow = rightThen, leftThen = rightThen, leftNow = rightThen;
+
 		while (true){
 			
-			if (kbhit()){
-				
-				update();
-			
-			}
-			
+      clock_gettime(CLOCK_REALTIME, &ts);
+      rightNow = ts.tv_nsec / 1000000;
+      leftNow = rightNow;
+
+      if (leftNow - leftThen >= 500){
+        if (kbhit()){
+          leftThen = leftNow;
+          updatePlayerPosition();
+        }
+      }
+
+      if (rightNow - rightThen >= 500){
+        rightThen = rightNow;
+        updateEnemyPosition();
+      }
+
 		}
 		
 	}

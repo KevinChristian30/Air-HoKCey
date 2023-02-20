@@ -255,6 +255,17 @@ namespace game{
     utility::moveConsoleCursor(0, 0);
 
   }
+
+  void reset(){
+
+    leftScore = 0;
+    rightScore = 0;
+
+    left = Puck(4, 8, "FOREGROUND_BLUE");
+    right = Puck(W - 5, 8, "FOREGROUND_RED");
+    ball = Ball(W / 2, H / 2, 1, 1);
+
+  }
 	
 	void loop(){
 		
@@ -337,6 +348,7 @@ namespace mainMenu{
 		
 		if (strcmp(input, "1") == 0){
 			
+      game::reset();
 			game::loop();
 			
 		} else if (strcmp(input, "2") == 0){

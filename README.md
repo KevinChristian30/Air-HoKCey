@@ -1,4 +1,4 @@
-# KCatch the Rain
+# Air HoKCey
 > A console game
 
 This console game is a simple game simulating Air Hockey
